@@ -1,4 +1,0 @@
-﻿dataset,indicador,cantidad,observacion
-RENIPRESS,Registros procesados,26850,Conteo de filas de la dimensión IPRESS
-Consultas y denuncias,Registros procesados,50689,Conteo de filas de la tabla de hechos
-Consultas y denuncias,Ubicación sin dato,3884,Valores nulos; no se asigna una ubicación inventada
