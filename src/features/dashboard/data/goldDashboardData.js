@@ -1,0 +1,85 @@
+﻿export const goldDashboardData = {
+  ipress: {
+    total: 26850,
+    estado: "ACTIVO",
+    porInstitucion: [
+      { nombre: "Privado", cantidad: 16858 },
+      { nombre: "Gobierno regional", cantidad: 8393 },
+      { nombre: "MINSA", cantidad: 509 },
+      { nombre: "EsSalud", cantidad: 410 },
+      { nombre: "Otros", cantidad: 680 },
+    ],
+    porCategoria: [
+      { nombre: "I-1", cantidad: 9869 },
+      { nombre: "I-2", cantidad: 6730 },
+      { nombre: "Sin categoría (0)", cantidad: 4894 },
+      { nombre: "I-3", cantidad: 4262 },
+      { nombre: "I-4", cantidad: 419 },
+      { nombre: "II-E", cantidad: 301 },
+      { nombre: "Otras categorías", cantidad: 375 },
+    ],
+  },
+  consultas: {
+    total: 50689,
+    porTipo: [
+      { nombre: "Consultas", cantidad: 27155 },
+      { nombre: "Denuncias", cantidad: 23465 },
+      { nombre: "Intervenciones de oficio", cantidad: 69 },
+    ],
+    porInstitucion: [
+      { nombre: "IPRESS", cantidad: 40756 },
+      { nombre: "IAFAS", cantidad: 5814 },
+      { nombre: "SUSALUD", cantidad: 3639 },
+      { nombre: "MINSA", cantidad: 231 },
+      { nombre: "Otros", cantidad: 249 },
+    ],
+    porGenero: [
+      { nombre: "Femenino", cantidad: 32780 },
+      { nombre: "Masculino", cantidad: 17856 },
+      { nombre: "Sin dato", cantidad: 53 },
+    ],
+  },
+  produccion: {
+    anio: 2015,
+    atenciones: 2699812,
+    atendidos: 2055088,
+    porDepartamento: [
+      { nombre: "Lima", atenciones: 1363866, atendidos: 1039735 },
+      { nombre: "Arequipa", atenciones: 309240, atendidos: 232331 },
+      { nombre: "La Libertad", atenciones: 242342, atendidos: 160464 },
+      { nombre: "Loreto", atenciones: 143122, atendidos: 107727 },
+      { nombre: "Callao", atenciones: 136570, atendidos: 112152 },
+      { nombre: "Ica", atenciones: 105559, atendidos: 80444 },
+      { nombre: "Cusco", atenciones: 81050, atendidos: 71014 },
+      { nombre: "Junín", atenciones: 71371, atendidos: 58375 },
+      { nombre: "Piura", atenciones: 65074, atendidos: 52486 },
+      { nombre: "Huánuco", atenciones: 54558, atendidos: 31711 },
+      { nombre: "Lambayeque", atenciones: 44661, atendidos: 41279 },
+      { nombre: "Moquegua", atenciones: 28737, atendidos: 22727 },
+      { nombre: "Áncash", atenciones: 13806, atendidos: 10728 },
+      { nombre: "Puno", atenciones: 10121, atendidos: 9209 },
+      { nombre: "Apurímac", atenciones: 7711, atendidos: 6514 },
+      { nombre: "Ayacucho", atenciones: 7015, atendidos: 6028 },
+      { nombre: "Ucayali", atenciones: 5430, atendidos: 4163 },
+      { nombre: "Madre de Dios", atenciones: 5341, atendidos: 4343 },
+      { nombre: "Cajamarca", atenciones: 2157, atendidos: 1959 },
+      { nombre: "Huancavelica", atenciones: 1187, atendidos: 967 },
+      { nombre: "Tacna", atenciones: 661, atendidos: 533 },
+      { nombre: "Tumbes", atenciones: 233, atendidos: 199 },
+    ],
+  },
+  calidad: {
+    consultasSinUbicacion: 3884,
+    generoSinDato: 53,
+    fuentes: [
+      { nombre: "Consultas y denuncias", filas: 50689 },
+      { nombre: "RENIPRESS", filas: 26850 },
+      { nombre: "TEDEF", filas: 557475 },
+      { nombre: "Liquidaciones EPS", filas: 739706 },
+      { nombre: "Producción asistencial C1", filas: 14175 },
+    ],
+  },
+};
+
+export const formatNumber = (value) =>
+  new Intl.NumberFormat("es-PE").format(value);
