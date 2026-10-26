@@ -1,259 +1,370 @@
+
 import { useMemo, useState } from 'react';
-import { Building2, HeartPulse, Hospital, Stethoscope } from 'lucide-react';
-import AnimatedNumber from '../components/AnimatedNumber.jsx';
+import {
+  Activity,
+  Building2,
+  MapPin,
+  Users,
+  Search,
+  RotateCcw,
+  Printer,
+  TrendingUp,
+  ChevronDown,
+  Database,
+} from 'lucide-react';
 
-const alerts = [
-  {
-    code: 'ALT-001',
-    entity: 'IPRESS',
-    socialReason: 'SANNA - CLINICA BELEN',
-    department: 'Lima',
-    quantity: 90,
-    attentions: 90,
-    attended: 90,
-    date: '2026-10-24',
-    level: 'Alto',
-  },
-  {
-    code: 'ALT-002',
-    entity: 'SUSALUD',
-    socialReason: 'HOSPITAL REGIONAL DE LORETO "FELIPE SANTIAGO ARRIOLA IGLESIAS"',
-    department: 'Loreto',
-    quantity: 40,
-    attentions: 56,
-    attended: 50,
-    date: '2026-10-23',
-    level: 'Medio',
-  },
-  {
-    code: 'ALT-003',
-    entity: 'RENIPRESS',
-    socialReason: 'HOSPITAL REGIONAL DOCENTE CLINICO QUIRURGICO DANIEL ALCIDES CARRION DE HUANCAYO',
-    department: 'Junín',
-    quantity: 30,
-    attentions: 35,
-    attended: 35,
-    date: '2026-10-22',
-    level: 'Alto',
-  },
-];
+import {
+  goldDashboardData,
+  formatNumber,
+} from '../data/goldDashboardData.js';
 
-const metrics = [
-  { label: 'IPRESS', value: 5600, icon: Building2 },
-  { label: 'SUSALUD', value: 4800, icon: Stethoscope },
-  { label: 'RENIPRESS', value: 3000, icon: Hospital },
-  { label: 'Total Atenciones', value: 14000, icon: HeartPulse },
-];
-
-const filterOptions = {
-  department: ['Lima', 'Loreto', 'Junín'],
-  entity: ['IPRESS', 'SUSALUD', 'RENIPRESS'],
-};
-
-const initialFilters = {
-  department: '',
-  entity: '',
-  socialReason: '',
-  level: '',
-  date: '',
-};
-
-const number = new Intl.NumberFormat('es-PE');
-const dateFormat = new Intl.DateTimeFormat('es-PE', {
-  day: '2-digit',
-  month: '2-digit',
-  year: 'numeric',
-});
+function MetricCard({ title, value, description, icon: Icon, accent }) {
+  return (
+    <article className="production-metric">
+      <div className={`production-metric-icon ${accent}`}>
+        <Icon size={21} />
+      </div>
+      <div className="production-metric-content">
+        <span>{title}</span>
+        <strong>{formatNumber(value)}</strong>
+        <small>{description}</small>
+      </div>
+    </article>
+  );
+}
 
 function AssistencialPage() {
-  const [filters, setFilters] = useState(initialFilters);
-  const [appliedFilters, setAppliedFilters] = useState(initialFilters);
-  const [selectedCode, setSelectedCode] = useState(alerts[0].code);
-  const [reportMessage, setReportMessage] = useState('');
+  const [department, setDepartment] = useState('');
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState('atenciones');
+  const [sortDirection, setSortDirection] = useState('desc');
 
-  const filteredAlerts = useMemo(
-    () =>
-      alerts.filter((alert) =>
-        (!appliedFilters.department || alert.department === appliedFilters.department)
-        && (!appliedFilters.entity || alert.entity === appliedFilters.entity)
-        && (!appliedFilters.socialReason
-          || alert.socialReason.toLocaleLowerCase('es-PE').includes(appliedFilters.socialReason.toLocaleLowerCase('es-PE')))
-        && (!appliedFilters.level || alert.level === appliedFilters.level)
-        && (!appliedFilters.date || alert.date === appliedFilters.date),
-      ),
-    [appliedFilters],
-  );
+  const production = goldDashboardData.produccion;
+  const departments = production.porDepartamento;
 
-  const selectedAlert = filteredAlerts.find((alert) => alert.code === selectedCode) ?? filteredAlerts[0];
+  const filteredDepartments = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase('es-PE');
 
-  function updateFilter(event) {
-    const { name, value } = event.target;
-    setFilters((current) => ({ ...current, [name]: value }));
-  }
+    return departments
+      .filter((item) => {
+        const matchesDepartment =
+          !department || item.nombre === department;
 
-  function applyFilters(event) {
-    event.preventDefault();
-    setAppliedFilters(filters);
-    setSelectedCode('');
-    setReportMessage('');
-  }
+        const matchesSearch =
+          !query || item.nombre.toLocaleLowerCase('es-PE').includes(query);
+
+        return matchesDepartment && matchesSearch;
+      })
+      .sort((a, b) => {
+        const comparison = sortBy === 'nombre'
+          ? a.nombre.localeCompare(b.nombre, 'es')
+          : a[sortBy] - b[sortBy];
+
+        return sortDirection === 'desc' ? -comparison : comparison;
+      });
+  }, [departments, department, search, sortBy, sortDirection]);
+
+  const topDepartment = [...departments].sort(
+    (a, b) => b.atenciones - a.atenciones,
+  )[0];
+
+  const share = (value) =>
+    production.atenciones > 0
+      ? (value / production.atenciones) * 100
+      : 0;
 
   function clearFilters() {
-    setFilters(initialFilters);
-    setAppliedFilters(initialFilters);
-    setSelectedCode(alerts[0].code);
-    setReportMessage('');
+    setDepartment('');
+    setSearch('');
+    setSortBy('atenciones');
+    setSortDirection('desc');
   }
 
-  function printReport() {
-    window.print();
+  function toggleSort(field) {
+    if (sortBy === field) {
+      setSortDirection((current) => current === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortBy(field);
+      setSortDirection(field === 'nombre' ? 'asc' : 'desc');
+    }
   }
 
   return (
-    <div className="assistencial-page">
-      <header className="assistencial-heading">
-        <h1>Producción Asistencial en Emergencia.</h1>
-        <p>Monitoreo de atenciones médicas de Emergencias para cada IPRESS</p>
+    <div className="assistencial-page production-page">
+      <header className="production-heading">
+        <div>
+          <span className="production-eyebrow">
+            STASYS / ANÁLISIS ASISTENCIAL
+          </span>
+          <h1>Producción Asistencial</h1>
+          <p>
+            Analiza las atenciones y personas atendidas por departamento,
+            con información procesada del año {production.anio}.
+          </p>
+        </div>
+
+        <div className="production-year">
+          <span>PERIODO ANALIZADO</span>
+          <strong>{production.anio}</strong>
+          <small>Datos históricos GOLD</small>
+        </div>
       </header>
 
-      <section className="assistencial-metrics" aria-label="Resumen de atenciones">
-        {metrics.map(({ label, value, icon: Icon }) => (
-          <article className="assistencial-metric" key={label}>
-            <span className="assistencial-metric-icon" aria-hidden="true"><Icon size={21} /></span>
-            <div>
-              <h2>{label}</h2>
-              <p><AnimatedNumber key={value} value={value} /></p>
-            </div>
-          </article>
-        ))}
+      <section className="production-metrics" aria-label="Indicadores de producción">
+        <MetricCard
+          title="Atenciones registradas"
+          value={production.atenciones}
+          description="Total nacional · 2015"
+          icon={Activity}
+          accent="blue"
+        />
+        <MetricCard
+          title="Personas atendidas"
+          value={production.atendidos}
+          description="Total nacional · 2015"
+          icon={Users}
+          accent="violet"
+        />
+        <MetricCard
+          title="Departamentos"
+          value={departments.length}
+          description="Con registros disponibles"
+          icon={MapPin}
+          accent="teal"
+        />
+        <MetricCard
+          title="IPRESS registradas"
+          value={goldDashboardData.ipress.total}
+          description="Según RENIPRESS procesado"
+          icon={Building2}
+          accent="amber"
+        />
       </section>
 
-      <section className="assistencial-panel assistencial-filters-panel">
-        <h2>Filtros de búsqueda</h2>
-        <form className="assistencial-filters" onSubmit={applyFilters}>
-          <label>
-            Departamento
-            <select name="department" value={filters.department} onChange={updateFilter}>
-              <option value="">Todos</option>
-              {filterOptions.department.map((item) => <option key={item} value={item}>{item}</option>)}
-            </select>
-          </label>
-          <label>
-            Entidad
-            <select name="entity" value={filters.entity} onChange={updateFilter}>
-              <option value="">Todas</option>
-              {filterOptions.entity.map((item) => <option key={item} value={item}>{item}</option>)}
-            </select>
-          </label>
-          <label>
-            Razón social
-            <select name="socialReason" value={filters.socialReason} onChange={updateFilter}>
-              <option value="">Todas</option>
-              {alerts.map((alert) => <option key={alert.code} value={alert.socialReason}>{alert.socialReason}</option>)}
-            </select>
-          </label>
-          <label>
-            Nivel de atención
-            <select name="level" value={filters.level} onChange={updateFilter}>
-              <option value="">Todos</option>
-              <option value="Alto">Alto</option>
-              <option value="Medio">Medio</option>
-            </select>
-          </label>
-          <label>
-            Fecha
-            <select name="date" value={filters.date} onChange={updateFilter}>
-              <option value="">Todas</option>
-              {alerts.map((alert) => (
-                <option key={alert.date} value={alert.date}>{dateFormat.format(new Date(`${alert.date}T12:00:00`))}</option>
-              ))}
-            </select>
-          </label>
-          <div className="assistencial-filter-actions">
-            <button className="assistencial-button assistencial-button-primary" type="submit">Buscar</button>
-            <button className="assistencial-button" type="button" onClick={clearFilters}>Limpiar filtros</button>
-          </div>
-        </form>
-      </section>
-
-      <section className="assistencial-panel">
-        <h2>Listado de alertas</h2>
-        <div className="assistencial-table-wrap">
-          <table className="assistencial-table">
-            <thead>
-              <tr>
-                <th scope="col">Código</th>
-                <th scope="col">Entidad</th>
-                <th scope="col">Razón social</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Atenciones</th>
-                <th scope="col">Atendidos</th>
-                <th scope="col">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAlerts.map((alert) => (
-                <tr className={selectedAlert?.code === alert.code ? 'selected' : ''} key={alert.code}>
-                  <td>{alert.code}</td>
-                  <td>{alert.entity}</td>
-                  <td>{alert.socialReason}</td>
-                  <td className="assistencial-number">{number.format(alert.quantity)}</td>
-                  <td className="assistencial-number">{number.format(alert.attentions)}</td>
-                  <td className="assistencial-number">{number.format(alert.attended)}</td>
-                  <td>
-                    <button
-                      className="assistencial-button assistencial-detail-button"
-                      type="button"
-                      onClick={() => {
-                        setSelectedCode(alert.code);
-                        setReportMessage('');
-                      }}
-                      aria-label={`Ver detalle de ${alert.code}`}
-                    >
-                      Ver detalle
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {filteredAlerts.length === 0 && (
-                <tr>
-                  <td className="assistencial-empty" colSpan="7">No se encontraron alertas con esos filtros.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      <section className="production-highlight">
+        <div className="production-highlight-icon">
+          <TrendingUp size={23} />
+        </div>
+        <div className="production-highlight-main">
+          <span>DEPARTAMENTO CON MAYOR PRODUCCIÓN</span>
+          <h2>{topDepartment.nombre}</h2>
+          <p>
+            {formatNumber(topDepartment.atenciones)} atenciones registradas
+            durante {production.anio}.
+          </p>
+        </div>
+        <div className="production-highlight-share">
+          <strong>{share(topDepartment.atenciones).toLocaleString('es-PE', {
+            maximumFractionDigits: 2,
+          })}%</strong>
+          <span>del total nacional</span>
         </div>
       </section>
 
-      {selectedAlert && (
-        <section className="assistencial-panel assistencial-detail">
-          <h2>Detalle de la Asistencia Médica</h2>
-          <div className="assistencial-detail-content">
-            <div className="assistencial-detail-id">
-              <strong>{selectedAlert.code}</strong>
-              <span>{selectedAlert.entity}</span>
-            </div>
-            <dl className="assistencial-detail-fields">
-              <div><dt>Razón social:</dt><dd>{selectedAlert.socialReason}</dd></div>
-              <div><dt>Total de atenciones:</dt><dd>{number.format(selectedAlert.attentions)}</dd></div>
-              <div><dt>Nivel de atención:</dt><dd><span className={`assistencial-level level-${selectedAlert.level.toLocaleLowerCase('es-PE')}`}>{selectedAlert.level}</span></dd></div>
-            </dl>
-            <div className="assistencial-detail-actions">
-              <button className="assistencial-button" type="button" onClick={printReport}>Generar PDF General</button>
-              <button
-                className="assistencial-button assistencial-button-primary"
-                type="button"
-                onClick={() => setReportMessage('La generación de reportes con IA todavía no está conectada. Puedes imprimir o guardar esta vista como PDF.')}
-              >
-                Generar Reporte Con IA
-              </button>
-              {reportMessage && <p className="assistencial-report-message" role="status">{reportMessage}</p>}
-            </div>
+      <section className="production-table-panel">
+        <div className="production-panel-heading">
+          <div>
+            <h2>Detalle por departamento</h2>
+            <p>
+              Distribución de atenciones y personas atendidas.
+            </p>
           </div>
-        </section>
-      )}
+          <span className="production-record-count">
+            {filteredDepartments.length} de {departments.length} departamentos
+          </span>
+        </div>
 
-      <footer className="assistencial-footer">STASYS | Sistema de Monitoreo y Análisis</footer>
+        <div className="production-filters">
+          <label className="production-filter">
+            <span>Departamento</span>
+            <div className="production-select-wrap">
+              <MapPin size={17} />
+              <select
+                value={department}
+                onChange={(event) => setDepartment(event.target.value)}
+              >
+                <option value="">Todos los departamentos</option>
+                {departments.map((item) => (
+                  <option key={item.nombre} value={item.nombre}>
+                    {item.nombre}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={16} />
+            </div>
+          </label>
+
+          <label className="production-filter production-search">
+            <span>Buscar</span>
+            <div className="production-search-wrap">
+              <Search size={17} />
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Nombre del departamento..."
+              />
+            </div>
+          </label>
+
+          <button
+            className="production-action-button"
+            type="button"
+            onClick={clearFilters}
+          >
+            <RotateCcw size={16} />
+            Limpiar
+          </button>
+
+          <button
+            className="production-action-button production-print-button"
+            type="button"
+            onClick={() => window.print()}
+          >
+            <Printer size={16} />
+            Imprimir
+          </button>
+        </div>
+
+        <div className="production-table-scroll">
+          <table className="production-table">
+            <thead>
+              <tr>
+                <th>
+                  <button type="button" onClick={() => toggleSort('nombre')}>
+                    Departamento
+                    <ChevronDown size={14} />
+                  </button>
+                </th>
+                <th className="production-number-column">
+                  <button type="button" onClick={() => toggleSort('atenciones')}>
+                    Atenciones
+                    <ChevronDown size={14} />
+                  </button>
+                </th>
+                <th className="production-number-column">
+                  <button type="button" onClick={() => toggleSort('atendidos')}>
+                    Personas atendidas
+                    <ChevronDown size={14} />
+                  </button>
+                </th>
+                <th className="production-distribution-column">
+                  Participación nacional
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredDepartments.map((item, index) => {
+                const percentage = share(item.atenciones);
+
+                return (
+                  <tr key={item.nombre}>
+                    <td>
+                      <div className="production-department-cell">
+                        <span className="production-row-index">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                        <strong>{item.nombre}</strong>
+                        {item.nombre === topDepartment.nombre && (
+                          <span className="production-leader-tag">Mayor</span>
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="production-number">
+                      {formatNumber(item.atenciones)}
+                    </td>
+
+                    <td className="production-number production-secondary-number">
+                      {formatNumber(item.atendidos)}
+                    </td>
+
+                    <td>
+                      <div className="production-share-cell">
+                        <div className="production-share-track">
+                          <div
+                            className={`production-share-fill ${
+                              item.nombre === topDepartment.nombre
+                                ? 'production-share-fill-top'
+                                : ''
+                            }`}
+                            style={{
+                              width: `${Math.max(
+                                percentage > 0 ? 1 : 0,
+                                percentage / share(topDepartment.atenciones) * 100,
+                              )}%`,
+                            }}
+                          />
+                        </div>
+                        <span>
+                          {percentage.toLocaleString('es-PE', {
+                            maximumFractionDigits: 2,
+                          })}%
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {filteredDepartments.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="production-empty">
+                    No se encontraron departamentos con esos filtros.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+
+            {filteredDepartments.length > 0 && (
+              <tfoot>
+                <tr>
+                  <td>Resultados mostrados</td>
+                  <td className="production-number">
+                    {formatNumber(
+                      filteredDepartments.reduce(
+                        (sum, item) => sum + item.atenciones,
+                        0,
+                      ),
+                    )}
+                  </td>
+                  <td className="production-number">
+                    {formatNumber(
+                      filteredDepartments.reduce(
+                        (sum, item) => sum + item.atendidos,
+                        0,
+                      ),
+                    )}
+                  </td>
+                  <td>
+                    {share(
+                      filteredDepartments.reduce(
+                        (sum, item) => sum + item.atenciones,
+                        0,
+                      ),
+                    ).toLocaleString('es-PE', {
+                      maximumFractionDigits: 2,
+                    })}% del total nacional
+                  </td>
+                </tr>
+              </tfoot>
+            )}
+          </table>
+        </div>
+
+        <div className="production-table-footer">
+          <span>
+            <Database size={15} />
+            Fuente: GOLD · Producción asistencial C1
+          </span>
+          <span>Periodo: {production.anio} · Valores históricos</span>
+        </div>
+      </section>
+
+      <footer className="assistencial-footer production-footer">
+        STASYS · Producción asistencial · Información procesada
+      </footer>
     </div>
   );
 }
