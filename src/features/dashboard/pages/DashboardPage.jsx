@@ -1,121 +1,239 @@
-import { AlertTriangle, CheckCircle2, FileText, Files } from 'lucide-react';
-import useDashboard from '../hooks/useDashboard.js';
-import KpiCard from '../components/KpiCard.jsx';
-import CasesTrendChart from '../components/CasesTrendChart.jsx';
-import PriorityDonut from '../components/PriorityDonut.jsx';
-import CasesByType from '../components/CasesByType.jsx';
-import ActivityFeed from '../components/ActivityFeed.jsx';
-import CampaignPerformance from '../components/CampaignPerformance.jsx';
-import DashboardState from '../components/DashboardState.jsx';
+﻿import {
+  Activity,
+  Building2,
+  ClipboardList,
+  MapPin,
+  Users,
+} from "lucide-react";
+import { goldDashboardData as data, formatNumber } from "../data/goldDashboardData.js";
 
-const statusClass = {
-  Abierto: 'status-open',
-  'En revisión': 'status-review',
-  Cerrado: 'status-closed',
-  Crítico: 'status-critical',
-};
+function Kpi({ title, value, detail, icon: Icon, color }) {
+  return (
+    <article className="gold-kpi">
+      <div className={`gold-kpi-icon ${color}`}>
+        <Icon size={23} />
+      </div>
+      <div className="gold-kpi-copy">
+        <span>{title}</span>
+        <strong>{formatNumber(value)}</strong>
+        <small>{detail}</small>
+      </div>
+    </article>
+  );
+}
 
-export default function DashboardPage() {
-  const { status, data, error, retry } = useDashboard();
-  if (status !== 'success') {
-    return <div className="dashboard-page"><div className="page-heading"><h1>Centro de Supervisión de Casos</h1></div><DashboardState status={status} error={error} retry={retry} /></div>;
-  }
-  const {
-    registeredCases,
-    criticalCases,
-    receivedReports,
-    compliance,
-    casesByMonth,
-    casesByPriority,
-    totalPriorityCases,
-    casesByType,
-    maxTypeValue,
-    recentActivity,
-    supervisedCases,
-    regionGoals,
-  } = data;
+function BarList({ title, subtitle, items, valueKey = "cantidad", limit = 6 }) {
+  const visibleItems = items.slice(0, limit);
+  const maxValue = Math.max(...visibleItems.map((item) => item[valueKey]), 1);
 
   return (
-    <div className="dashboard-page">
-      <div className="page-heading">
-        <h1>Centro de Supervisión de Casos</h1>
-        <p>Información en tiempo real para una supervisión más efectiva.</p>
+    <section className="panel gold-panel">
+      <header className="panel-header">
+        <div>
+          <h2>{title}</h2>
+          <p className="gold-subtitle">{subtitle}</p>
+        </div>
+      </header>
+      <div className="gold-bars">
+        {visibleItems.map((item) => (
+          <div className="gold-bar-row" key={item.nombre}>
+            <div className="gold-bar-label">
+              <span>{item.nombre}</span>
+              <strong>{formatNumber(item[valueKey])}</strong>
+            </div>
+            <div
+              className="gold-bar-track"
+              role="img"
+              aria-label={`${item.nombre}: ${formatNumber(item[valueKey])}`}
+            >
+              <div
+                className="gold-bar-fill"
+                style={{ width: `${(item[valueKey] / maxValue) * 100}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export default function DashboardPage() {
+  const tipos = data.consultas.porTipo;
+  const totalTipos = tipos.reduce((sum, item) => sum + item.cantidad, 0);
+  const sinUbicacion = data.calidad.consultasSinUbicacion;
+  const porcentajeSinUbicacion = (
+    (sinUbicacion / data.consultas.total) * 100
+  ).toFixed(1);
+
+  return (
+    <div className="dashboard-page gold-dashboard">
+      <header className="page-heading">
+        <div className="gold-eyebrow">STASYS · PLATAFORMA DE ANÁLISIS</div>
+        <h1>Centro de Supervisión de Datos</h1>
+        <p>
+          Resumen de IPRESS, consultas, denuncias y producción asistencial
+          a partir de los conjuntos de datos GOLD.
+        </p>
+      </header>
+
+      <div className="gold-source-note">
+        <Activity size={17} />
+        <span>
+          Vista basada en datos procesados. Cada indicador corresponde a su
+          fuente y periodo disponible; no representa información en tiempo real.
+        </span>
       </div>
 
-      <div className="dashboard-success" role="status"><CheckCircle2 size={18} aria-hidden="true" /> Datos cargados correctamente{import.meta.env.VITE_USE_MOCK_API !== 'false' ? ' · Datos de demostración' : ''}<button className="text-link" type="button" onClick={retry}>Actualizar</button></div>
-      <section className="kpi-grid">
-        <KpiCard
-          label="Casos Registrados"
-          value={registeredCases}
-          icon={FileText}
-          tone="red"
+      <section className="kpi-grid gold-kpi-grid" aria-label="Indicadores generales">
+        <Kpi
+          title="IPRESS registradas"
+          value={data.ipress.total}
+          detail="Estado: activo"
+          icon={Building2}
+          color="blue"
         />
-        <KpiCard
-          label="Casos Críticos"
-          value={criticalCases}
-          icon={AlertTriangle}
-          tone="alert"
+        <Kpi
+          title="Consultas y denuncias"
+          value={data.consultas.total}
+          detail="Registros procesados"
+          icon={ClipboardList}
+          color="teal"
         />
-        <KpiCard
-          label="Reportes Recibidos"
-          value={receivedReports}
-          icon={Files}
-          tone="green"
+        <Kpi
+          title="Atenciones asistenciales"
+          value={data.produccion.atenciones}
+          detail={`Año ${data.produccion.anio}`}
+          icon={Activity}
+          color="purple"
         />
-        <KpiCard
-          label="Cumplimiento"
-          value={compliance}
-          icon={CheckCircle2}
-          tone="blue"
+        <Kpi
+          title="Atendidos"
+          value={data.produccion.atendidos}
+          detail={`Producción del año ${data.produccion.anio}`}
+          icon={Users}
+          color="orange"
         />
       </section>
 
-      <section className="content-grid">
-        <CasesTrendChart data={casesByMonth} />
-        <PriorityDonut data={casesByPriority} total={totalPriorityCases} />
+      <section className="content-grid gold-content-grid">
+        <div className="panel gold-panel">
+          <header className="panel-header">
+            <div>
+              <h2>Tipos de consulta y denuncia</h2>
+              <p className="gold-subtitle">
+                Distribución de los {formatNumber(totalTipos)} registros
+              </p>
+            </div>
+          </header>
+          <div className="gold-type-list">
+            {tipos.map((item) => {
+              const percent = (item.cantidad / totalTipos) * 100;
+              return (
+                <div className="gold-type-item" key={item.nombre}>
+                  <div className="gold-type-heading">
+                    <span>{item.nombre}</span>
+                    <strong>{formatNumber(item.cantidad)}</strong>
+                  </div>
+                  <div className="gold-bar-track">
+                    <div
+                      className="gold-bar-fill"
+                      style={{ width: `${percent}%` }}
+                    />
+                  </div>
+                  <small>{percent.toFixed(1)}% del total</small>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="panel gold-panel gold-quality-panel">
+          <header className="panel-header">
+            <div>
+              <h2>Calidad de datos</h2>
+              <p className="gold-subtitle">
+                Observaciones identificadas durante el procesamiento
+              </p>
+            </div>
+          </header>
+          <div className="gold-quality-number">
+            <MapPin size={22} />
+            <div>
+              <strong>{formatNumber(sinUbicacion)}</strong>
+              <span>Registros sin ubicación</span>
+            </div>
+          </div>
+          <div className="gold-quality-track">
+            <div style={{ width: `${porcentajeSinUbicacion}%` }} />
+          </div>
+          <p className="gold-quality-description">
+            Representan el {porcentajeSinUbicacion}% de los registros de
+            consultas y denuncias. No se les asigna una ubicación estimada.
+          </p>
+          <div className="gold-quality-footer">
+            <span>Género sin dato</span>
+            <strong>{formatNumber(data.calidad.generoSinDato)}</strong>
+          </div>
+        </div>
       </section>
 
-      <section className="content-grid secondary-grid">
-        <CasesByType data={casesByType} maxValue={maxTypeValue} />
-        <ActivityFeed items={recentActivity} />
+      <section className="content-grid gold-content-grid">
+        <BarList
+          title="IPRESS por institución"
+          subtitle="Distribución de establecimientos registrados"
+          items={data.ipress.porInstitucion}
+          limit={6}
+        />
+        <BarList
+          title="IPRESS por categoría"
+          subtitle="Categorías más representativas"
+          items={data.ipress.porCategoria}
+          limit={6}
+        />
       </section>
 
-      <CampaignPerformance data={regionGoals} />
+      <BarList
+        title="Producción asistencial por departamento"
+        subtitle={`Atenciones registradas durante ${data.produccion.anio}`}
+        items={data.produccion.porDepartamento}
+        valueKey="atenciones"
+        limit={10}
+      />
 
-      <section className="panel orders-panel">
+      <section className="panel gold-panel">
         <header className="panel-header">
-          <h2>Últimos casos supervisados</h2>
-          <button className="text-link" type="button">
-            Ver todos
-          </button>
+          <div>
+            <h2>Fuentes de datos procesadas</h2>
+            <p className="gold-subtitle">
+              Las cantidades representan filas procesadas por fuente y no deben
+              sumarse como si fueran personas o casos únicos.
+            </p>
+          </div>
         </header>
-        <table className="orders-table">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Entidad</th>
-              <th>Tipo</th>
-              <th>Estado</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            {supervisedCases.map((item) => (
-              <tr key={item.code}>
-                <td className="mono">{item.code}</td>
-                <td>{item.entity}</td>
-                <td>{item.type}</td>
-                <td>
-                  <span className={`status ${statusClass[item.status] ?? ''}`}>
-                    {item.status}
-                  </span>
-                </td>
-                <td>{item.date}</td>
+        <div className="gold-table-wrap">
+          <table className="orders-table">
+            <thead>
+              <tr>
+                <th>Fuente</th>
+                <th>Filas procesadas</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.calidad.fuentes.map((fuente) => (
+                <tr key={fuente.nombre}>
+                  <td>{fuente.nombre}</td>
+                  <td>{formatNumber(fuente.filas)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
+
+      <footer className="gold-footer">
+        STASYS · Capa GOLD · Información según las fuentes disponibles
+      </footer>
     </div>
   );
 }
