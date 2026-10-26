@@ -2718,3 +2718,1028 @@ button {
     min-width: 0;
   }
 }
+
+
+/* ==================================================
+   STASYS | RENIPRESS ANALYTICS
+   Estilos aislados y responsive
+================================================== */
+
+.renipress-page {
+  --rp-ink: #172b4d;
+  --rp-muted: #66758b;
+  --rp-border: #e3eaf2;
+  --rp-surface: #ffffff;
+  --rp-background: #f5f8fc;
+  --rp-blue: #2563eb;
+  --rp-green: #0f9f78;
+  --rp-radius: 16px;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding-bottom: 24px;
+  color: var(--rp-ink);
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+
+.renipress-page *,
+.renipress-page *::before,
+.renipress-page *::after {
+  box-sizing: border-box;
+}
+
+.renipress-page button,
+.renipress-page input,
+.renipress-page select {
+  font: inherit;
+}
+
+.renipress-page button {
+  cursor: pointer;
+}
+
+.renipress-page button:focus-visible,
+.renipress-page input:focus-visible,
+.renipress-page select:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.renipress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin-bottom: 22px;
+}
+
+.renipress-header-copy {
+  flex: 1 1 300px;
+  min-width: 0;
+}
+
+.renipress-eyebrow,
+.renipress-section-kicker {
+  display: block;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  line-height: 1.6;
+}
+
+.renipress-header h1 {
+  margin: 7px 0 8px;
+  color: #15345b;
+  font-size: clamp(1.65rem, 2.5vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+}
+
+.renipress-header-copy p {
+  max-width: 650px;
+  margin: 0;
+  color: var(--rp-muted);
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
+.renipress-source-card {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex: 0 1 255px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid #dbe8f5;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fff, #f5f9ff);
+  box-shadow: 0 3px 12px rgb(15 42 74 / 4%);
+}
+
+.renipress-source-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #e5efff;
+  color: #2563eb;
+}
+
+.renipress-source-card > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.renipress-source-card strong {
+  font-size: 0.86rem;
+}
+
+.renipress-source-card > div span {
+  color: var(--rp-muted);
+  font-size: 0.76rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.renipress-source-check {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: #0f9f78;
+}
+
+.renipress-data-banner {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  margin-bottom: 20px;
+  padding: 15px 18px;
+  border: 1px solid #dbeafe;
+  border-radius: 13px;
+  background: #eff6ff;
+}
+
+.renipress-data-banner-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.renipress-data-banner > div:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+
+.renipress-data-banner strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #1e3a8a;
+  font-size: 0.87rem;
+}
+
+.renipress-data-banner p {
+  margin: 0;
+  color: #425d8b;
+  font-size: 0.81rem;
+  line-height: 1.55;
+}
+
+.renipress-data-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border: 1px solid #bbf7d0;
+  border-radius: 99px;
+  background: #f0fdf4;
+  color: #166534;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.renipress-data-badge > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+.renipress-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.renipress-metric {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--rp-border);
+  border-radius: var(--rp-radius);
+  background: var(--rp-surface);
+  box-shadow: 0 4px 15px rgb(30 55 90 / 3%);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.renipress-metric:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgb(30 55 90 / 7%);
+}
+
+.renipress-metric-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+}
+
+.renipress-metric-icon.blue {
+  background: #e9f1ff;
+  color: #2563eb;
+}
+
+.renipress-metric-icon.green {
+  background: #e2f8ee;
+  color: #07805f;
+}
+
+.renipress-metric-icon.violet {
+  background: #f0eaff;
+  color: #7546d9;
+}
+
+.renipress-metric-icon.amber {
+  background: #fff4dc;
+  color: #b77910;
+}
+
+.renipress-metric-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.renipress-metric-content > span {
+  display: block;
+  color: #63748b;
+  font-size: 0.79rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.renipress-metric-content strong {
+  display: block;
+  margin: 7px 0 6px;
+  color: #19385e;
+  font-size: clamp(1.45rem, 2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.renipress-metric-content small {
+  display: block;
+  color: #8a98aa;
+  font-size: 0.73rem;
+  line-height: 1.5;
+}
+
+.renipress-analytics {
+  margin-bottom: 28px;
+}
+
+.renipress-section-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.renipress-section-title h2,
+.renipress-directory-header h2 {
+  margin: 5px 0 6px;
+  color: #19385e;
+  font-size: clamp(1.15rem, 1.7vw, 1.4rem);
+  font-weight: 780;
+  letter-spacing: -0.025em;
+  line-height: 1.35;
+}
+
+.renipress-section-title p,
+.renipress-directory-header p {
+  margin: 0;
+  color: var(--rp-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.renipress-chart-total {
+  padding: 8px 11px;
+  border: 1px solid var(--rp-border);
+  border-radius: 9px;
+  background: #fff;
+  color: #52657e;
+  font-size: 0.76rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.renipress-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.renipress-chart-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--rp-border);
+  border-radius: var(--rp-radius);
+  background: #fff;
+  box-shadow: 0 4px 15px rgb(30 55 90 / 3%);
+}
+
+.renipress-panel-heading {
+  min-width: 0;
+  margin-bottom: 22px;
+}
+
+.renipress-panel-heading h2 {
+  margin: 0 0 6px;
+  color: #1c385b;
+  font-size: 0.98rem;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.renipress-panel-heading p {
+  margin: 0;
+  color: #8794a7;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.renipress-bars {
+  display: grid;
+  gap: 17px;
+  min-width: 0;
+}
+
+.renipress-bar-row {
+  min-width: 0;
+}
+
+.renipress-bar-label {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  margin-bottom: 8px;
+}
+
+.renipress-bar-label span {
+  min-width: 0;
+  color: #53657d;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.renipress-bar-label strong {
+  flex: 0 0 auto;
+  color: #1c385b;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.renipress-bar-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #edf2f8;
+}
+
+.renipress-bar-fill {
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  transition: width 220ms ease;
+}
+
+.renipress-chart-card:nth-child(2) .renipress-bar-fill {
+  background: linear-gradient(90deg, #0d9488, #5eead4);
+}
+
+.renipress-chart-card:nth-child(3) .renipress-bar-fill {
+  background: linear-gradient(90deg, #7c3aed, #b197fc);
+}
+
+.renipress-no-chart-data {
+  padding: 20px 0;
+  color: var(--rp-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.renipress-directory {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--rp-border);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 5px 20px rgb(30 55 90 / 4%);
+}
+
+.renipress-directory-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 23px 23px 20px;
+}
+
+.renipress-directory-header > div:first-child {
+  min-width: 0;
+}
+
+.renipress-result-pill {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 9px 12px;
+  border: 1px solid #dce9fb;
+  border-radius: 10px;
+  background: #f3f7ff;
+  color: #1d4ed8;
+  font-size: 0.78rem;
+}
+
+.renipress-result-pill strong {
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.renipress-result-pill span {
+  color: #5574aa;
+}
+
+.renipress-filters {
+  display: grid;
+  grid-template-columns: minmax(230px, 1.8fr) repeat(3, minmax(135px, 1fr));
+  gap: 15px;
+  align-items: end;
+  padding: 20px 23px;
+  border-top: 1px solid #edf1f6;
+  border-bottom: 1px solid #edf1f6;
+  background: #f9fbfe;
+}
+
+.renipress-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.renipress-filter > span {
+  color: #405570;
+  font-size: 0.77rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.renipress-search-control,
+.renipress-select-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.renipress-search-control > svg {
+  position: absolute;
+  left: 12px;
+  flex: 0 0 auto;
+  color: #8190a4;
+  pointer-events: none;
+}
+
+.renipress-search-control input,
+.renipress-select-control select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  border: 1px solid #dce4ee;
+  border-radius: 9px;
+  background: #fff;
+  color: #253e5c;
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.renipress-search-control input {
+  padding: 10px 12px 10px 38px;
+}
+
+.renipress-search-control input::placeholder {
+  color: #9aa6b5;
+}
+
+.renipress-select-control select {
+  appearance: none;
+  padding: 10px 34px 10px 11px;
+  cursor: pointer;
+}
+
+.renipress-select-control > svg {
+  position: absolute;
+  right: 11px;
+  color: #718198;
+  pointer-events: none;
+}
+
+.renipress-search-control input:focus,
+.renipress-select-control select:focus {
+  border-color: #76a5f8;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 10%);
+}
+
+.renipress-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 9px 13px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-size: 0.79rem;
+  font-weight: 700;
+  line-height: 1.4;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.renipress-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.renipress-button-primary {
+  border-color: #2459c4;
+  background: #2563eb;
+  color: #fff;
+}
+
+.renipress-button-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.renipress-button-secondary {
+  border-color: #d8e1ec;
+  background: #fff;
+  color: #405570;
+}
+
+.renipress-button-secondary:hover:not(:disabled) {
+  border-color: #b8c9dd;
+  background: #f0f5fb;
+}
+
+.renipress-clear-button {
+  align-self: end;
+  white-space: nowrap;
+}
+
+.renipress-table-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 15px 23px;
+  color: #718198;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.renipress-table-meta strong {
+  color: #334c6a;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.renipress-scroll-hint {
+  color: #8a98aa;
+  font-size: 0.74rem;
+}
+
+.renipress-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.renipress-table {
+  width: 100%;
+  min-width: 1250px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.78rem;
+}
+
+.renipress-table thead {
+  background: #f4f7fb;
+}
+
+.renipress-table th {
+  padding: 13px 15px;
+  border-top: 1px solid #e8edf4;
+  border-bottom: 1px solid #e1e8f0;
+  color: #61728a;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.035em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.renipress-table td {
+  max-width: 260px;
+  padding: 14px 15px;
+  border-bottom: 1px solid #edf1f6;
+  color: #50627a;
+  line-height: 1.55;
+  text-align: left;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.renipress-table tbody tr {
+  transition: background 120ms ease;
+}
+
+.renipress-table tbody tr:hover {
+  background: #f7faff;
+}
+
+.renipress-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.renipress-code {
+  color: #315d9e;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.renipress-establishment-name {
+  display: block;
+  min-width: 170px;
+  color: #233f61;
+  font-weight: 750;
+}
+
+.renipress-address {
+  display: block;
+  margin-top: 4px;
+  color: #8b98a9;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.renipress-category {
+  display: inline-block;
+  padding: 5px 8px;
+  border: 1px solid #dbeafe;
+  border-radius: 7px;
+  background: #eff6ff;
+  color: #2457a6;
+  font-size: 0.73rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.renipress-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 180px;
+  padding: 5px 9px;
+  border: 1px solid #e2e8f0;
+  border-radius: 99px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.renipress-status > span {
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+.renipress-status.is-active {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.renipress-status.is-active > span {
+  background: #22c55e;
+}
+
+.renipress-status.is-other {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #a16207;
+}
+
+.renipress-status.is-other > span {
+  background: #eab308;
+}
+
+.renipress-empty {
+  height: 240px;
+  text-align: center !important;
+}
+
+.renipress-empty svg,
+.renipress-empty strong,
+.renipress-empty span {
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.renipress-empty svg {
+  color: #94a3b8;
+}
+
+.renipress-empty strong {
+  color: #334c6a;
+}
+
+.renipress-empty span {
+  color: #7d8ba0;
+}
+
+.renipress-empty .renipress-button {
+  margin-top: 8px;
+}
+
+.renipress-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 17px 23px;
+  border-top: 1px solid #edf1f6;
+}
+
+.renipress-pagination > span {
+  color: #7b899b;
+  font-size: 0.79rem;
+}
+
+.renipress-pagination > span strong {
+  color: #334c6a;
+}
+
+.renipress-pagination > div {
+  display: flex;
+  gap: 8px;
+}
+
+.renipress-directory-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 13px 23px;
+  border-top: 1px solid #edf1f6;
+  background: #f9fbfe;
+  color: #8290a2;
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+.renipress-directory-footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.renipress-page-footer {
+  padding: 22px 4px 4px;
+  color: #8491a2;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.renipress-state-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 24px;
+  border: 1px solid #dbeafe;
+  border-radius: 15px;
+  background: #f8fbff;
+  color: #1d4ed8;
+}
+
+.renipress-state-card > svg {
+  flex: 0 0 auto;
+}
+
+.renipress-state-card h2 {
+  margin: 0 0 7px;
+  color: #1e3a8a;
+  font-size: 1rem;
+}
+
+.renipress-state-card p {
+  margin: 0 0 9px;
+  color: #536b91;
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+.renipress-state-card .renipress-button {
+  margin-top: 10px;
+}
+
+.renipress-error {
+  border-color: #fecaca;
+  background: #fff8f8;
+  color: #b91c1c;
+}
+
+.renipress-error h2 {
+  color: #991b1b;
+}
+
+.renipress-error p {
+  color: #7f4242;
+}
+
+.renipress-spinner {
+  animation: renipress-spin 1s linear infinite;
+}
+
+@keyframes renipress-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Escritorios medianos y tablets */
+@media (max-width: 1250px) {
+  .renipress-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .renipress-chart-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .renipress-chart-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .renipress-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .renipress-search-filter {
+    grid-column: span 2;
+  }
+}
+
+/* Móviles y pantallas estrechas */
+@media (max-width: 680px) {
+  .renipress-header {
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .renipress-source-card {
+    flex-basis: 100%;
+  }
+
+  .renipress-data-banner {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 13px;
+  }
+
+  .renipress-data-badge {
+    margin-left: 51px;
+  }
+
+  .renipress-metrics,
+  .renipress-chart-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .renipress-chart-card:last-child {
+    grid-column: auto;
+  }
+
+  .renipress-metric {
+    padding: 16px;
+  }
+
+  .renipress-section-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .renipress-chart-total {
+    white-space: normal;
+  }
+
+  .renipress-chart-card {
+    padding: 17px;
+  }
+
+  .renipress-directory-header {
+    padding: 18px 16px;
+  }
+
+  .renipress-filters {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+    padding: 17px 16px;
+  }
+
+  .renipress-search-filter {
+    grid-column: auto;
+  }
+
+  .renipress-clear-button {
+    width: 100%;
+  }
+
+  .renipress-table-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 14px 16px;
+  }
+
+  .renipress-pagination {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .renipress-pagination > div {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .renipress-pagination .renipress-button {
+    min-width: 0;
+    padding-inline: 8px;
+  }
+
+  .renipress-directory-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 13px 16px;
+  }
+
+  .renipress-state-card {
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .renipress-page *,
+  .renipress-page *::before,
+  .renipress-page *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
