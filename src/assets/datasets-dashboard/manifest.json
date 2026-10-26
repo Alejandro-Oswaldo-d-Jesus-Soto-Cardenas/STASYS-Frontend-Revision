@@ -1,0 +1,22 @@
+{
+  "proyecto": "STASYS",
+  "capa": "GOLD",
+  "destino": "s3://staysis-renipress-equipo02-2026/gold/dashboard/",
+  "fecha_generacion_utc": "2026-10-26T16:49:12.663205+00:00",
+  "tablas_generadas": [
+    "resumen_fuentes.csv",
+    "kpi_ipress.csv",
+    "ipress_por_departamento.csv",
+    "ipress_por_clasificacion.csv",
+    "ipress_por_categoria.csv",
+    "ipress_por_institucion.csv",
+    "ipress_por_estado.csv",
+    "consultas_por_tipo.csv",
+    "consultas_por_genero.csv",
+    "consultas_por_tipo_institucion.csv",
+    "consultas_por_naturaleza_institucion.csv",
+    "c1_produccion_anual.csv",
+    "c1_produccion_por_departamento.csv",
+    "calidad_datos_dashboard.csv"
+  ]
+}
