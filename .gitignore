@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+
+src/assets/datasets-cleaned/pres_liq_eps_202508.csv
+src/assets/datasets-cleaned/pcm_bd_farmacia_tedef_2026_septiembre.csv

@@ -14,9 +14,10 @@ import {
   AlertTriangle,
   LoaderCircle,
   RotateCcw,
+  ShieldCheck,
 } from 'lucide-react';
 
-import renipressUrl from '../../../assets/datasets-sinProcesar/RENIPRESS_2026_v6.csv?url';
+import renipressUrl from '../../../assets/datasets-cleaned/renipress_2026_v6.csv?url';
 
 const PAGE_SIZE = 10;
 const numberFormat = new Intl.NumberFormat('es-PE');
@@ -31,6 +32,7 @@ const REQUIRED_FIELDS = [
   'PROVINCIA',
   'DISTRITO',
   'ESTADO',
+  'CONDICION',
 ];
 
 function formatNumber(value) {
@@ -45,12 +47,12 @@ function cleanValue(value) {
 
 /**
  * Parser CSV compatible con:
- * - Separador punto y coma
+ * - Separador coma
  * - Campos entre comillas
  * - Comillas escapadas como ""
  * - Saltos de línea dentro de campos entre comillas
  */
-function parseCsv(text, delimiter = ';') {
+function parseCsv(text, delimiter = ',') {
   const rows = [];
   let row = [];
   let field = '';
@@ -69,8 +71,13 @@ function parseCsv(text, delimiter = ';') {
     } else if (char === delimiter && !insideQuotes) {
       row.push(field);
       field = '';
-    } else if ((char === '\n' || char === '\r') && !insideQuotes) {
-      if (char === '\r' && text[i + 1] === '\n') i += 1;
+    } else if (
+      (char === '\n' || char === '\r') &&
+      !insideQuotes
+    ) {
+      if (char === '\r' && text[i + 1] === '\n') {
+        i += 1;
+      }
 
       row.push(field);
       field = '';
@@ -100,7 +107,9 @@ function parseCsv(text, delimiter = ';') {
   }
 
   if (rows.length < 2) {
-    throw new Error('El CSV está vacío o no contiene registros para mostrar.');
+    throw new Error(
+      'El CSV está vacío o no contiene registros para mostrar.',
+    );
   }
 
   const headers = rows[0].map((header) =>
@@ -117,46 +126,71 @@ function parseCsv(text, delimiter = ';') {
     );
   }
 
-  return rows.slice(1).map((values, index) => {
-    const record = {};
+  return rows
+    .slice(1)
+    .map((values, index) => {
+      const record = {};
 
-    headers.forEach((header, columnIndex) => {
-      record[header] = cleanValue(values[columnIndex]);
-    });
+      headers.forEach((header, columnIndex) => {
+        record[header] = cleanValue(values[columnIndex]);
+      });
 
-    // Descarta filas que no tienen código ni nombre.
-    if (!record.COD_IPRESS && !record.NOMBRE) return null;
+      if (!record.COD_IPRESS && !record.NOMBRE) {
+        return null;
+      }
 
-    record.COD_IPRESS = record.COD_IPRESS || `SIN-CODIGO-${index + 1}`;
-    record.NOMBRE = record.NOMBRE || 'SIN NOMBRE REGISTRADO';
+      record.COD_IPRESS =
+        record.COD_IPRESS || `SIN-CODIGO-${index + 1}`;
 
-    return record;
-  }).filter(Boolean);
+      record.NOMBRE =
+        record.NOMBRE || 'SIN NOMBRE REGISTRADO';
+
+      return record;
+    })
+    .filter(Boolean);
 }
 
 function uniqueValues(records, field) {
-  return [...new Set(
-    records
-      .map((record) => record[field])
-      .filter(Boolean),
-  )].sort((a, b) => a.localeCompare(b, 'es'));
+  return [
+    ...new Set(
+      records
+        .map((record) => record[field])
+        .filter(Boolean),
+    ),
+  ].sort((a, b) => a.localeCompare(b, 'es'));
 }
 
 function aggregate(records, field, limit = 8) {
   const counts = new Map();
 
   records.forEach((record) => {
-    const name = record[field] || 'SIN DATO';
+    let name = record[field] || 'SIN DATO';
+
+    // El valor 0 no se considera una categoría sanitaria confirmada.
+    if (field === 'CATEGORIA' && name === '0') {
+      name = 'SIN CATEGORÍA IDENTIFICADA';
+    }
+
     counts.set(name, (counts.get(name) || 0) + 1);
   });
 
   return [...counts.entries()]
     .map(([name, total]) => ({ name, total }))
-    .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name, 'es'))
+    .sort(
+      (a, b) =>
+        b.total - a.total ||
+        a.name.localeCompare(b.name, 'es'),
+    )
     .slice(0, limit);
 }
 
-function MetricCard({ title, value, description, icon: Icon, accent }) {
+function MetricCard({
+  title,
+  value,
+  description,
+  icon: Icon,
+  accent,
+}) {
   return (
     <article className="renipress-metric">
       <div className={`renipress-metric-icon ${accent}`}>
@@ -173,7 +207,10 @@ function MetricCard({ title, value, description, icon: Icon, accent }) {
 }
 
 function BarPanel({ title, subtitle, items, totalRecords }) {
-  const maxValue = Math.max(...items.map((item) => item.total), 1);
+  const maxValue = Math.max(
+    ...items.map((item) => item.total),
+    1,
+  );
 
   return (
     <section className="renipress-chart-card">
@@ -196,7 +233,10 @@ function BarPanel({ title, subtitle, items, totalRecords }) {
               : 0;
 
             return (
-              <div className="renipress-bar-row" key={item.name}>
+              <div
+                className="renipress-bar-row"
+                key={item.name}
+              >
                 <div className="renipress-bar-label">
                   <span title={item.name}>{item.name}</span>
                   <strong>{formatNumber(item.total)}</strong>
@@ -211,7 +251,10 @@ function BarPanel({ title, subtitle, items, totalRecords }) {
                   <div
                     className="renipress-bar-fill"
                     style={{
-                      width: `${Math.max((item.total / maxValue) * 100, 1)}%`,
+                      width: `${Math.max(
+                        (item.total / maxValue) * 100,
+                        1,
+                      )}%`,
                     }}
                   />
                 </div>
@@ -233,7 +276,7 @@ function RenipressPage() {
   const [institution, setInstitution] = useState('');
   const [category, setCategory] = useState('');
   const [classification, setClassification] = useState('');
-  const [status, setStatus] = useState('');
+  const [condition, setCondition] = useState('');
   const [page, setPage] = useState(1);
 
   async function loadDataset(signal) {
@@ -253,18 +296,22 @@ function RenipressPage() {
       const parsedRecords = parseCsv(csvText);
 
       if (parsedRecords.length === 0) {
-        throw new Error('El dataset no contiene registros válidos.');
+        throw new Error(
+          'El dataset no contiene registros válidos.',
+        );
       }
 
       setRecords(parsedRecords);
       setPage(1);
     } catch (loadError) {
-      if (loadError.name === 'AbortError') return;
+      if (loadError.name === 'AbortError') {
+        return;
+      }
 
       setRecords([]);
       setError(
         loadError.message ||
-        'Ocurrió un error inesperado al cargar el dataset RENIPRESS.',
+          'Ocurrió un error inesperado al cargar el dataset RENIPRESS.',
       );
     } finally {
       if (!signal.aborted) {
@@ -301,15 +348,35 @@ function RenipressPage() {
     [records],
   );
 
-  const statuses = useMemo(
-    () => uniqueValues(records, 'ESTADO'),
+  const conditions = useMemo(
+    () => uniqueValues(records, 'CONDICION'),
     [records],
   );
 
-  const activeCount = useMemo(
-    () => records.filter(
-      (record) => record.ESTADO.toLocaleUpperCase('es-PE') === 'ACTIVO',
-    ).length,
+  const coordinatesCount = useMemo(
+    () =>
+      records.filter((record) => {
+        const norte = record.NORTE?.trim();
+        const este = record.ESTE?.trim();
+
+        return (
+          norte !== '' &&
+          este !== '' &&
+          Number.isFinite(Number(norte)) &&
+          Number.isFinite(Number(este))
+        );
+      }).length,
+    [records],
+  );
+
+  const privateCount = useMemo(
+    () =>
+      records.filter(
+        (record) =>
+          record.INSTITUCION
+            ?.trim()
+            .toLocaleUpperCase('es-PE') === 'PRIVADO',
+      ).length,
     [records],
   );
 
@@ -327,16 +394,23 @@ function RenipressPage() {
           record.PROVINCIA,
           record.UBIGEO,
         ].some((value) =>
-          (value || '').toLocaleLowerCase('es-PE').includes(query),
+          (value || '')
+            .toLocaleLowerCase('es-PE')
+            .includes(query),
         );
 
       return (
         matchesSearch &&
-        (!department || record.DEPARTAMENTO === department) &&
-        (!institution || record.INSTITUCION === institution) &&
-        (!category || record.CATEGORIA === category) &&
-        (!classification || record.CLASIFICACION === classification) &&
-        (!status || record.ESTADO === status)
+        (!department ||
+          record.DEPARTAMENTO === department) &&
+        (!institution ||
+          record.INSTITUCION === institution) &&
+        (!category ||
+          record.CATEGORIA === category) &&
+        (!classification ||
+          record.CLASIFICACION === classification) &&
+        (!condition ||
+          record.CONDICION === condition)
       );
     });
   }, [
@@ -346,7 +420,7 @@ function RenipressPage() {
     institution,
     category,
     classification,
-    status,
+    condition,
   ]);
 
   const departmentStats = useMemo(
@@ -373,6 +447,7 @@ function RenipressPage() {
 
   const visibleRecords = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
+
     return filteredRecords.slice(start, start + PAGE_SIZE);
   }, [filteredRecords, currentPage]);
 
@@ -387,17 +462,17 @@ function RenipressPage() {
     setInstitution('');
     setCategory('');
     setClassification('');
-    setStatus('');
+    setCondition('');
     setPage(1);
   }
 
   const filtersActive = Boolean(
     search ||
-    department ||
-    institution ||
-    category ||
-    classification ||
-    status,
+      department ||
+      institution ||
+      category ||
+      classification ||
+      condition,
   );
 
   return (
@@ -409,7 +484,8 @@ function RenipressPage() {
           </span>
           <h1>Directorio RENIPRESS</h1>
           <p>
-            Explora y analiza los establecimientos de salud registrados en el dataset.
+            Explora y analiza los establecimientos de salud
+            registrados en el dataset.
           </p>
         </div>
 
@@ -427,6 +503,7 @@ function RenipressPage() {
                   : 'Archivo CSV cargado'}
             </span>
           </div>
+
           {!loading && !error && (
             <CheckCircle2
               className="renipress-source-check"
@@ -438,24 +515,36 @@ function RenipressPage() {
       </header>
 
       {loading && (
-        <section className="renipress-state-card" aria-live="polite">
-          <LoaderCircle className="renipress-spinner" size={27} />
+        <section
+          className="renipress-state-card"
+          aria-live="polite"
+        >
+          <LoaderCircle
+            className="renipress-spinner"
+            size={27}
+          />
           <div>
             <h2>Cargando dataset RENIPRESS</h2>
-            <p>Estamos leyendo y procesando los registros del archivo CSV.</p>
+            <p>
+              Estamos leyendo y procesando los registros del
+              archivo CSV.
+            </p>
           </div>
         </section>
       )}
 
       {!loading && error && (
-        <section className="renipress-state-card renipress-error" role="alert">
+        <section
+          className="renipress-state-card renipress-error"
+          role="alert"
+        >
           <AlertTriangle size={26} />
           <div>
             <h2>No se pudo cargar RENIPRESS</h2>
             <p>{error}</p>
             <p>
-              Verifica que el CSV exista en la ruta configurada y que sus columnas
-              coincidan con las esperadas.
+              Verifica que el CSV exista en la ruta configurada
+              y que sus columnas coincidan con las esperadas.
             </p>
             <button
               className="renipress-button renipress-button-primary"
@@ -479,10 +568,10 @@ function RenipressPage() {
               <Database size={19} />
             </div>
             <div>
-              <strong>Datos del archivo RENIPRESS</strong>
+              <strong>Datos del archivo RENIPRESS limpio</strong>
               <p>
-                Indicadores y gráficos calculados desde los registros cargados.
-                La información corresponde a la versión local del CSV.
+                Indicadores y gráficos calculados directamente
+                desde los registros cargados.
               </p>
             </div>
             <span className="renipress-data-badge">
@@ -491,7 +580,10 @@ function RenipressPage() {
             </span>
           </section>
 
-          <section className="renipress-metrics" aria-label="Indicadores generales">
+          <section
+            className="renipress-metrics"
+            aria-label="Indicadores generales"
+          >
             <MetricCard
               title="Total de IPRESS"
               value={records.length}
@@ -499,29 +591,42 @@ function RenipressPage() {
               icon={Building2}
               accent="blue"
             />
+
             <MetricCard
-              title="IPRESS activas"
-              value={activeCount}
+              title="Coordenadas disponibles"
+              value={coordinatesCount}
               description={
                 records.length
-                  ? `${((activeCount / records.length) * 100).toFixed(1)}% del total`
+                  ? `${(
+                      (coordinatesCount / records.length) *
+                      100
+                    ).toFixed(1)}% del total`
                   : 'Sin registros'
               }
-              icon={Activity}
+              icon={MapPin}
               accent="green"
             />
+
             <MetricCard
               title="Departamentos"
               value={departments.length}
               description="Con presencia en el dataset"
-              icon={MapPin}
+              icon={Activity}
               accent="violet"
             />
+
             <MetricCard
-              title="Instituciones"
-              value={institutions.length}
-              description="Tipos registrados en el archivo"
-              icon={Database}
+              title="IPRESS privadas"
+              value={privateCount}
+              description={
+                records.length
+                  ? `${(
+                      (privateCount / records.length) *
+                      100
+                    ).toFixed(1)}% del total`
+                  : 'Sin registros'
+              }
+              icon={Building2}
               accent="amber"
             />
           </section>
@@ -529,14 +634,19 @@ function RenipressPage() {
           <section className="renipress-analytics">
             <div className="renipress-section-title">
               <div>
-                <span className="renipress-section-kicker">ANÁLISIS DEL DATASET</span>
+                <span className="renipress-section-kicker">
+                  ANÁLISIS DEL DATASET
+                </span>
                 <h2>Distribución de establecimientos</h2>
                 <p>
-                  Los gráficos se actualizan al cambiar los filtros del directorio.
+                  Los gráficos se actualizan al cambiar los
+                  filtros del directorio.
                 </p>
               </div>
+
               <span className="renipress-chart-total">
-                {formatNumber(filteredRecords.length)} registros analizados
+                {formatNumber(filteredRecords.length)} registros
+                analizados
               </span>
             </div>
 
@@ -547,12 +657,14 @@ function RenipressPage() {
                 items={departmentStats}
                 totalRecords={filteredRecords.length}
               />
+
               <BarPanel
                 title="Por institución"
                 subtitle="Distribución institucional"
                 items={institutionStats}
                 totalRecords={filteredRecords.length}
               />
+
               <BarPanel
                 title="Por categoría"
                 subtitle="Categorías más frecuentes"
@@ -565,14 +677,20 @@ function RenipressPage() {
           <section className="renipress-directory">
             <div className="renipress-directory-header">
               <div>
-                <span className="renipress-section-kicker">CONSULTA DE DATOS</span>
+                <span className="renipress-section-kicker">
+                  CONSULTA DE DATOS
+                </span>
                 <h2>Directorio de establecimientos</h2>
                 <p>
-                  Busca por nombre o código y combina los filtros disponibles.
+                  Busca por nombre o código y combina los
+                  filtros disponibles.
                 </p>
               </div>
+
               <div className="renipress-result-pill">
-                <strong>{formatNumber(filteredRecords.length)}</strong>
+                <strong>
+                  {formatNumber(filteredRecords.length)}
+                </strong>
                 <span>resultados</span>
               </div>
             </div>
@@ -619,19 +737,25 @@ function RenipressPage() {
                   options: classifications,
                 },
                 {
-                  label: 'Estado',
-                  value: status,
-                  setter: setStatus,
-                  options: statuses,
+                  label: 'Condición',
+                  value: condition,
+                  setter: setCondition,
+                  options: conditions,
                 },
               ].map((filter) => (
-                <label className="renipress-filter" key={filter.label}>
+                <label
+                  className="renipress-filter"
+                  key={filter.label}
+                >
                   <span>{filter.label}</span>
                   <div className="renipress-select-control">
                     <select
                       value={filter.value}
                       onChange={(event) =>
-                        updateFilter(filter.setter, event.target.value)
+                        updateFilter(
+                          filter.setter,
+                          event.target.value,
+                        )
                       }
                     >
                       <option value="">Todos</option>
@@ -641,7 +765,10 @@ function RenipressPage() {
                         </option>
                       ))}
                     </select>
-                    <ChevronDown size={16} aria-hidden="true" />
+                    <ChevronDown
+                      size={16}
+                      aria-hidden="true"
+                    />
                   </div>
                 </label>
               ))}
@@ -662,15 +789,25 @@ function RenipressPage() {
                 Mostrando{' '}
                 <strong>
                   {filteredRecords.length
-                    ? formatNumber((currentPage - 1) * PAGE_SIZE + 1)
+                    ? formatNumber(
+                        (currentPage - 1) * PAGE_SIZE + 1,
+                      )
                     : '0'}
-                  {'–'}
+                  –
                   {formatNumber(
-                    Math.min(currentPage * PAGE_SIZE, filteredRecords.length),
+                    Math.min(
+                      currentPage * PAGE_SIZE,
+                      filteredRecords.length,
+                    ),
                   )}
                 </strong>{' '}
-                de <strong>{formatNumber(filteredRecords.length)}</strong> registros
+                de{' '}
+                <strong>
+                  {formatNumber(filteredRecords.length)}
+                </strong>{' '}
+                registros
               </span>
+
               <span className="renipress-scroll-hint">
                 Desliza horizontalmente para ver todas las columnas
               </span>
@@ -688,59 +825,80 @@ function RenipressPage() {
                     <th>Departamento</th>
                     <th>Provincia</th>
                     <th>Distrito</th>
-                    <th>Estado</th>
+                    <th>Condición</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {visibleRecords.map((record, index) => (
-                    <tr key={`${record.COD_IPRESS}-${index}`}>
-                      <td>
-                        <span className="renipress-code">
-                          {record.COD_IPRESS}
-                        </span>
-                      </td>
-                      <td>
-                        <strong className="renipress-establishment-name">
-                          {record.NOMBRE}
-                        </strong>
-                        {record.DIRECCION && (
-                          <small className="renipress-address">
-                            {record.DIRECCION}
-                          </small>
-                        )}
-                      </td>
-                      <td>{record.INSTITUCION || '—'}</td>
-                      <td>{record.CLASIFICACION || '—'}</td>
-                      <td>
-                        <span className="renipress-category">
-                          {record.CATEGORIA || 'Sin categoría'}
-                        </span>
-                      </td>
-                      <td>{record.DEPARTAMENTO || '—'}</td>
-                      <td>{record.PROVINCIA || '—'}</td>
-                      <td>{record.DISTRITO || '—'}</td>
-                      <td>
-                        <span
-                          className={`renipress-status ${
-                            record.ESTADO.toLocaleUpperCase('es-PE') === 'ACTIVO'
-                              ? 'is-active'
-                              : 'is-other'
-                          }`}
-                        >
-                          <span />
-                          {record.ESTADO || 'SIN ESTADO'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  {visibleRecords.map((record, index) => {
+                    const currentCondition =
+                      record.CONDICION?.trim().toLocaleUpperCase(
+                        'es-PE',
+                      );
+
+                    const isActive = currentCondition === 'ACTIVO';
+
+                    return (
+                      <tr
+                        key={`${record.COD_IPRESS}-${index}`}
+                      >
+                        <td>
+                          <span className="renipress-code">
+                            {record.COD_IPRESS}
+                          </span>
+                        </td>
+
+                        <td>
+                          <strong className="renipress-establishment-name">
+                            {record.NOMBRE}
+                          </strong>
+                          {record.DIRECCION && (
+                            <small className="renipress-address">
+                              {record.DIRECCION}
+                            </small>
+                          )}
+                        </td>
+
+                        <td>{record.INSTITUCION || '—'}</td>
+                        <td>{record.CLASIFICACION || '—'}</td>
+
+                        <td>
+                          <span className="renipress-category">
+                            {!record.CATEGORIA ||
+                            record.CATEGORIA === '0'
+                              ? 'Sin categoría identificada'
+                              : record.CATEGORIA}
+                          </span>
+                        </td>
+
+                        <td>{record.DEPARTAMENTO || '—'}</td>
+                        <td>{record.PROVINCIA || '—'}</td>
+                        <td>{record.DISTRITO || '—'}</td>
+
+                        <td>
+                          <span
+                            className={`renipress-status ${
+                              isActive ? 'is-active' : 'is-other'
+                            }`}
+                          >
+                            <span />
+                            {record.CONDICION || 'SIN CONDICIÓN'}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
 
                   {visibleRecords.length === 0 && (
                     <tr>
                       <td colSpan={9} className="renipress-empty">
                         <Search size={25} />
-                        <strong>No se encontraron establecimientos</strong>
+                        <strong>
+                          No se encontraron establecimientos
+                        </strong>
                         <span>
-                          Prueba con otro término o modifica los filtros.
+                          Prueba con otro término o modifica
+                          los filtros.
                         </span>
                         <button
                           className="renipress-button renipress-button-secondary"
@@ -768,12 +926,15 @@ function RenipressPage() {
                   type="button"
                   disabled={currentPage <= 1}
                   onClick={() =>
-                    setPage((previous) => Math.max(1, previous - 1))
+                    setPage((previous) =>
+                      Math.max(1, previous - 1),
+                    )
                   }
                 >
                   <ChevronLeft size={16} />
                   Anterior
                 </button>
+
                 <button
                   className="renipress-button renipress-button-primary"
                   type="button"
@@ -793,8 +954,9 @@ function RenipressPage() {
             <footer className="renipress-directory-footer">
               <span>
                 <Database size={15} />
-                Fuente: RENIPRESS CSV local
+                Fuente: RENIPRESS CSV limpio local
               </span>
+
               <span>
                 {formatNumber(records.length)} registros cargados ·{' '}
                 {PAGE_SIZE} por página
@@ -803,7 +965,8 @@ function RenipressPage() {
           </section>
 
           <footer className="renipress-page-footer">
-            STASYS · RENIPRESS · Panel de análisis de establecimientos de salud
+            STASYS · RENIPRESS · Panel de análisis de
+            establecimientos de salud
           </footer>
         </>
       )}
