@@ -22,6 +22,8 @@ import c1AnualCsv from "../../../assets/datasets-dashboard/c1_produccion_anual.c
 import farmaciaKpiCsv from "../../../assets/datasets-dashboard/kpi_farmacia_resumen.csv?raw";
 import epsKpiCsv from "../../../assets/datasets-dashboard/kpi_eps_resumen.csv?raw";
 
+import PeruDepartmentMap from "../components/PeruDepartmentMap.jsx";
+
 const OFFICIAL_SOURCES = {
   c1: {
     title: "Producción asistencial en emergencia",
@@ -164,6 +166,7 @@ function KpiCard({ icon: Icon, label, value, detail, color }) {
       <div className={`home-kpi-icon ${color}`}>
         <Icon size={22} strokeWidth={1.9} />
       </div>
+
       <div className="home-kpi-content">
         <span className="home-kpi-label">{label}</span>
         <strong className="home-kpi-value">{value}</strong>
@@ -208,6 +211,7 @@ function HorizontalBars({
               <span title={row.label}>{row.label}</span>
               <strong>{formatNumber(row.value)}</strong>
             </div>
+
             <div
               className="home-bar-track"
               role="img"
@@ -564,6 +568,26 @@ export default function DashboardPage() {
             </p>
           </section>
         </div>
+      </section>
+
+      {/* NUEVA SECCIÓN: MAPA INTERACTIVO DEL PERÚ */}
+      <section className="home-section">
+        <div className="home-section-heading">
+          <div>
+            <span className="home-section-kicker">
+              ANÁLISIS GEOGRÁFICO
+            </span>
+
+            <h2>Distribución territorial</h2>
+
+            <p className="home-section-description">
+              Explora la producción asistencial por departamento utilizando
+              los registros del dataset C1.
+            </p>
+          </div>
+        </div>
+
+        <PeruDepartmentMap />
       </section>
 
       <section className="home-section">
