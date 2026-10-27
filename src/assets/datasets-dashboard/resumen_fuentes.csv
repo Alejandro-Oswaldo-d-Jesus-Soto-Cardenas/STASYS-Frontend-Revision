@@ -1,6 +1,6 @@
 ﻿dataset_id,dataset,rol,archivo_origen,filas_silver
-1,consultac1_produccion_asistencial_2015_v1,c1,ConsultaC1_Produccion_Asistencial_2015_v1.csv,14175
+1,consultac1_produccion_asistencial_2015_v1,c1,ConsultaC1_Produccion_Asistencial_2015_v1.csv,14171
 2,consultas_denuncias_2026_v1,consultas_denuncias,CONSULTAS_DENUNCIAS_2026_v1.csv,50689
-3,pcm_bd_atenciones_tedef_2025_septiembre,tedef,PCM_BD_atenciones_tedef_2025_septiembre.csv,557475
+3,pcm_bd_farmacia_tedef_2026_septiembre,farmacia,PCM_BD_farmacia_tedef_2026_septiembre.csv,1607842
 4,pres_liq_eps_202508,eps,PRES_LIQ_EPS_202508.csv,739706
 5,renipress_2026_v6,renipress,RENIPRESS_2026_v6.csv,26850

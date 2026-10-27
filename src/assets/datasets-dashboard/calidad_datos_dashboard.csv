@@ -1,4 +1,6 @@
-﻿dataset,indicador,cantidad,observacion
-RENIPRESS,Registros procesados,26850,Conteo de filas de la dimensión IPRESS
-Consultas y denuncias,Registros procesados,50689,Conteo de filas de la tabla de hechos
-Consultas y denuncias,Ubicación sin dato,3884,Valores nulos; no se asigna una ubicación inventada
+﻿dataset,rol,filas_totales,columnas_totales,sha256
+renipress_2026_v6,renipress,26850,33,16f3bab25a448ac965f29cb990aa195efbaec4c61b5620976cfce947fef46d2c
+consultac1_produccion_asistencial_2015_v1,c1,14171,14,834253669a83d9a1ccb9607dc7da3edf68300efba54442b355b195e2d8f84912
+consultas_denuncias_2026_v1,consultas_denuncias,50689,9,f6bc303da8bfa2f570a03a3663c4731f32e23adaa44474fcd3d335f0d4fa8fb1
+pcm_bd_farmacia_tedef_2026_septiembre,farmacia,1607842,23,46e49a3373feb6de6038937096d162c5a188983497c1ee8970a4278fb2389417
+pres_liq_eps_202508,eps,739706,49,18350751acf9b3aedfa547ffd323feec683ec299d63ac1aa165db7cf23a83f7a

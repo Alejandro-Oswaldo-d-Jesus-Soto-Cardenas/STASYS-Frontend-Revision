@@ -1,22 +1,146 @@
 {
-  "proyecto": "STASYS",
-  "capa": "GOLD",
-  "destino": "s3://staysis-renipress-equipo02-2026/gold/dashboard/",
-  "fecha_generacion_utc": "2026-10-26T16:49:12.663205+00:00",
-  "tablas_generadas": [
-    "resumen_fuentes.csv",
-    "kpi_ipress.csv",
-    "ipress_por_departamento.csv",
-    "ipress_por_clasificacion.csv",
-    "ipress_por_categoria.csv",
-    "ipress_por_institucion.csv",
-    "ipress_por_estado.csv",
-    "consultas_por_tipo.csv",
-    "consultas_por_genero.csv",
-    "consultas_por_tipo_institucion.csv",
-    "consultas_por_naturaleza_institucion.csv",
-    "c1_produccion_anual.csv",
-    "c1_produccion_por_departamento.csv",
-    "calidad_datos_dashboard.csv"
+  "generated_at": "2026-10-27T19:23:38.170513+00:00",
+  "total_archivos": 16,
+  "archivos": [
+    {
+      "archivo": "resumen_fuentes.csv",
+      "filas": 5,
+      "columnas": [
+        "dataset_id",
+        "dataset",
+        "rol",
+        "archivo_origen",
+        "filas_silver"
+      ]
+    },
+    {
+      "archivo": "kpi_ipress.csv",
+      "filas": 1,
+      "columnas": [
+        "total_ipress",
+        "total_instituciones",
+        "total_categorias",
+        "total_clasificaciones"
+      ]
+    },
+    {
+      "archivo": "ipress_por_categoria.csv",
+      "filas": 11,
+      "columnas": [
+        "categoria",
+        "total_ipress"
+      ]
+    },
+    {
+      "archivo": "ipress_por_clasificacion.csv",
+      "filas": 129,
+      "columnas": [
+        "clasificacion",
+        "total_ipress"
+      ]
+    },
+    {
+      "archivo": "ipress_por_institucion.csv",
+      "filas": 12,
+      "columnas": [
+        "institucion",
+        "total_ipress"
+      ]
+    },
+    {
+      "archivo": "ipress_por_estado.csv",
+      "filas": 1,
+      "columnas": [
+        "estado",
+        "total_ipress"
+      ]
+    },
+    {
+      "archivo": "c1_produccion_anual.csv",
+      "filas": 1,
+      "columnas": [
+        "ANHO",
+        "total_atenciones",
+        "total_atendidos"
+      ]
+    },
+    {
+      "archivo": "c1_produccion_por_departamento.csv",
+      "filas": 22,
+      "columnas": [
+        "departamento_codigo",
+        "total_atenciones",
+        "total_atendidos"
+      ]
+    },
+    {
+      "archivo": "consultas_por_genero.csv",
+      "filas": 3,
+      "columnas": [
+        "genero",
+        "total_consultas"
+      ]
+    },
+    {
+      "archivo": "consultas_por_tipo.csv",
+      "filas": 3,
+      "columnas": [
+        "tipo_solicitud",
+        "total_consultas"
+      ]
+    },
+    {
+      "archivo": "consultas_por_tipo_institucion.csv",
+      "filas": 8,
+      "columnas": [
+        "tipo_institucion",
+        "total_consultas"
+      ]
+    },
+    {
+      "archivo": "consultas_por_naturaleza_institucion.csv",
+      "filas": 24,
+      "columnas": [
+        "naturaleza_institucion",
+        "total_consultas"
+      ]
+    },
+    {
+      "archivo": "calidad_datos_dashboard.csv",
+      "filas": 5,
+      "columnas": [
+        "dataset",
+        "rol",
+        "filas_totales",
+        "columnas_totales",
+        "sha256"
+      ]
+    },
+    {
+      "archivo": "kpi_farmacia_resumen.csv",
+      "filas": 1,
+      "columnas": [
+        "total_registros",
+        "registros_con_descuadre",
+        "monto_total_venta"
+      ]
+    },
+    {
+      "archivo": "kpi_eps_resumen.csv",
+      "filas": 1,
+      "columnas": [
+        "total_liquidaciones",
+        "total_descuadres_gastos",
+        "monto_total_presentado"
+      ]
+    },
+    {
+      "archivo": "cobertura_departamental.csv",
+      "filas": 31,
+      "columnas": [
+        "departamento_codigo",
+        "total_ubigeos"
+      ]
+    }
   ]
 }

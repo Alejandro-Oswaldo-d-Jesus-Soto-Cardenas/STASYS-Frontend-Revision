@@ -1,4 +1,4 @@
-﻿agrupacion,cantidad_registros
-Femenino,32780
-Masculino,17856
-SIN DATO,53
+﻿genero,total_consultas
+FEMENINO,32780
+MASCULINO,17856
+NO ESPECIFICADO,53
